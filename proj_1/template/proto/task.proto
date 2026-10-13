@@ -1,0 +1,26 @@
+syntax = "proto3"; // Khai báo sử dụng phiên bản cú pháp proto3
+
+// Định nghĩa namespace (không gian tên) là tasks để tránh xung đột tên khi dịch sang code
+package tasks; 
+
+// Định nghĩa một cấu trúc dữ liệu (message) trống dùng làm tham số đầu vào không cần truyền dữ liệu
+message Empty {}
+
+// Định nghĩa cấu trúc dữ liệu đại diện cho một đối tượng công việc (Task)
+message Task {
+    string id = 1; // Trường id kiểu string, số 1 là field number (số định danh nhị phân)
+    string title = 2;
+    bool completed = 3;
+}
+
+// Định nghĩa cấu trúc message gói danh sách các task trả về
+message TaskList {
+    repeated Task tasks = 1;
+}
+
+// Khai báo dịch vụ gRPC chứa các phương thức gọi từ xa mà Client có thể tương tác
+service TaskService {
+    rpc GetTasks (Empty) returns (TaskList);
+}
+
+
