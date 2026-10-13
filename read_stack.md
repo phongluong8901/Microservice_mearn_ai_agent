@@ -1,7 +1,24 @@
 # --- lib
 
 # --- stack
+1. cho file task.proto vao grpc postman
+Việc bạn đưa file task.proto vào mục gRPC trong Postman đóng vai trò cốt lõi để Postman có thể giao tiếp được với gRPC Server của bạn.
 
+Cung cấp "bản đồ" (Hợp đồng API): Khác với REST API (dùng JSON thuần qua HTTP/1.1), gRPC truyền dữ liệu dưới dạng nhị phân (binary / Protobuf) qua HTTP/2. Postman không thể tự hiểu các đoạn mã nhị phân này nếu không có file .proto làm từ điển giải mã.
+
+Tự động tạo giao diện nhập liệu (Request Body): Khi bạn chọn file task.proto, Postman sẽ đọc cấu trúc message (ví dụ: message Empty) và tự động sinh ra khung JSON mẫu để bạn có thể điền dữ liệu gửi đi một cách trực quan mà không cần viết mã.
+
+Giải mã (Decode) dữ liệu trả về: Khi gRPC Server của bạn trả về một cục dữ liệu nhị phân (danh sách các Task), Postman sẽ dựa vào file .proto để dịch ngược (deserialize) nó thành định dạng JSON rõ ràng, giúp bạn nhìn thấy ngay kết quả như thế này:
+
+{
+    "tasks": [
+        {
+            "id": "abc-123",
+            "title": "Build gRPC system",
+            "completed": true
+        }
+    ]
+}
 
 # --- more
 🛠️ TECH STACK:
@@ -49,6 +66,9 @@ RAG (embbeding, retievers, propmpt)
 design memory agent
 human in the loop (HITL)
 React/tailwind
+
+---
+user -> nodejs(epress server + grpc server)
 
 # --- workflow
 1. gRPC

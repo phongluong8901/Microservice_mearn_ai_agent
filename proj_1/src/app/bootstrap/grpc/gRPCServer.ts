@@ -44,7 +44,7 @@ function randomTask() {
 }
 
 // 6. Hàm xử lý logic (Handler) cho RPC method `GetTasks`
-async function GetTasks(callback: any) {
+async function GetTasks(call: any, callback: any) {
     try {
         // Tạo một mảng gồm 5 task ngẫu nhiên sử dụng hàm randomTask ở trên
         const generateTasks = Array.from({ length: 5 }, randomTask);
