@@ -8,8 +8,8 @@ export function handleExpressError(err: Error, req: Request, res: Response, next
     res.status(statusCode).json({
         error: {
             message: err.message,
-            status: statusCode,
+            status: statusCode, // Ghi lại mã trạng thái lỗi trong JSON response để client dễ nhận biết
         }
     });
 
-}
+} // Kết thúc khối hàm handleExpressError
