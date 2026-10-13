@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./gateway:/app
+      - /app/node_modules
+      - ./proto:/app/proto
+    depends_on:
+      - task-service
+
+  auth-service:
+    build: ./auth-service
+    ports:
+      - "50053:50053"
+    volumes:
+      - ./auth-service:/app
+      - /app/node_modules
+      - ./proto:/app/proto
+
+  task-service:
+    build: ./task-service
+    ports:
+      - "50051:50051"
+    volumes:
+      - ./task-service:/app
+      - /app/node_modules
+      - ./proto:/app/proto
+    depends_on:
+      - notification-service
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "50052:50052"
+    volumes:
+      - ./notification-service:/app
+      - /app/node_modules
+      - ./proto:/app/proto
+    depends_on:
+      - auth-service

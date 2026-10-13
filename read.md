@@ -19,5 +19,11 @@ npm install @langchain/langgraph @langchain/core
 --- cd proj_1
 
 # --- docker
+cd proj_1
+docker-compose up --build
 
 # --- link
+task-service: 5051
+notification-service: 5052
+auth-service: 5053
+gateway-service: 3000

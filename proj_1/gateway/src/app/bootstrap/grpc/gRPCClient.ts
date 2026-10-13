@@ -2,9 +2,9 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { response } from "express"; // (Lưu ý: Biến import này không dùng đến trong file này, bạn có thể xóa đi cho gọn)
 import path from "path";
+import { PROTO_PATH } from "./gRPCServer";
 
-// 1. Xác định đường dẫn tuyệt đối tới file cấu hình gRPC (.proto)
-const PROTO_PATH = path.join(process.cwd(), "proto", "task.proto");
+
 
 // 2. Đọc và phân tích file .proto đồng bộ (loadSync mặc định không có option nên cần đảm bảo tương thích kiểu dữ liệu nếu cần)
 const packageDefinition = protoLoader.loadSync(PROTO_PATH);

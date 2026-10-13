@@ -4,7 +4,7 @@ import crypto from "crypto";
 import path from "path";
 
 // 1. Xác định đường dẫn tuyệt đối tới file cấu hình gRPC (.proto)
-const PROTO_PATH = path.join(process.cwd(), "proto", "task.proto");
+export const PROTO_PATH = path.join("/app", "proto", "task.proto");
 
 // 2. Đọc và phân tích file .proto đồng bộ (loadSync)
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
