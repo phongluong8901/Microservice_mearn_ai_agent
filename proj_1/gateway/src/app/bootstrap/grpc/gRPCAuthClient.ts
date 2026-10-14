@@ -23,15 +23,56 @@ const gRPCAuthClient = new proto.AuthService(
     grpc.credentials.createInsecure()
 );
 
-export function registerUser(req: Request, res: Response, next: NextFunction) {
+export function registerUsergRPC(req: Request, res: Response, next: NextFunction) {
     try {
-        gRPCAuthClient.registerUser({
-            email: req.body.email,
-            password: req.body.password,
+        const fn = gRPCAuthClient.registerUser || gRPCAuthClient.RegisterUser;
+        fn.call(gRPCAuthClient, {
+            email: req.body?.email,
+            password: req.body?.password,
         }, (err: any, response: any) => {
             if (err) {
-                return res.status(500).json({
-                    message: err.message
+                return res.status(400).json({
+                    message: err.details || err.message
+                });
+            }
+
+            return res.json(response);
+        });
+    } catch (error) {
+        next(error)
+    }
+}
+
+export function verifyUserEmailgRPC(req: Request, res: Response, next: NextFunction) {
+    try {
+        const fn = gRPCAuthClient.verifyUserEmail || gRPCAuthClient.VerifyUserEmail;
+        fn.call(gRPCAuthClient, {
+            email: req.body?.email,
+            otpCode: String(req.body?.otpCode || ""),
+        }, (err: any, response: any) => {
+            if (err) {
+                return res.status(400).json({
+                    message: err.details || err.message
+                });
+            }
+
+            return res.json(response);
+        });
+    } catch (error) {
+        next(error)
+    }
+}
+
+export function loginUsergRPC(req: Request, res: Response, next: NextFunction) {
+    try {
+        const fn = gRPCAuthClient.loginUser || gRPCAuthClient.LoginUser;
+        fn.call(gRPCAuthClient, {
+            email: req.body?.email,
+            password: req.body?.password,
+        }, (err: any, response: any) => {
+            if (err) {
+                return res.status(400).json({
+                    message: err.details || err.message
                 });
             }
 

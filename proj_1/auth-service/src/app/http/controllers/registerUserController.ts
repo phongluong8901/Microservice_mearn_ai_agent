@@ -36,7 +36,7 @@ export async function registerUserController(props: {
         });
 
         return {
-            message: "Your account was created successfully",
+            message: "We sent to your an email verify, use the code verify your email",
             user
         };
     } catch (error) {

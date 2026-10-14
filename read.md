@@ -21,6 +21,8 @@ npm i bcrypt
 npm i --save-dev @types/bcrypt
 npm i amqplib
 npm i -D @types/amqplib
+npm i jsonwebtoken
+npm i --save-dev @types/jsonwebtoken
 
 --- notification-service
 npm i amqplib

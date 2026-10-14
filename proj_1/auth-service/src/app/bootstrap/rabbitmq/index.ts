@@ -9,7 +9,7 @@ export function getChannel(): amqp.Channel {
     return channel;
 }
 
-export async function connectRabbitMQ(maxRetries = 10, retryDelayMs = 3000): Promise<void> {
+export async function connectRabbitMQ(maxRetries = 30, retryDelayMs = 3000): Promise<void> {
     const rabbitUrl = process.env.RabbitMQ_URL;
 
     if (!rabbitUrl) {

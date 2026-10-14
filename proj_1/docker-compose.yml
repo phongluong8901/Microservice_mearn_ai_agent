@@ -32,8 +32,10 @@ services:
     networks:
       - microservices-net
     depends_on:
-      - mongo
-      - rabbitmq
+      mongo:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
     restart: always
 
   # task-service:
@@ -61,7 +63,8 @@ services:
     networks:
       - microservices-net
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
     restart: always
 
   mongo:
@@ -90,6 +93,12 @@ services:
       - RABBITMQ_DEFAULT_PASS=password123
     networks:
       - microservices-net
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 15s
+      retries: 10
+      start_period: 20s
     restart: always
 
 networks:

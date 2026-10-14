@@ -4,6 +4,8 @@ package auth;
 
 service AuthService {
     rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+    rpc verifyUserEmail(verifyUserEmailRequest) returns (verifyUserEmailResponse);
+    rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
 }
 
 message RegisterUserRequest {
@@ -20,4 +22,35 @@ message User {
     string _id = 1;
     string email = 2;
     string name = 3;
+}
+
+message verifyUserEmailRequest {
+    string email = 1;
+    string otpCode = 2;
+}
+
+message verifyUserEmailResponse {
+    bool success = 1;
+    string message = 2;
+}
+
+//login types
+message LoginUserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message Token {
+    string accessToken = 1;
+    string refreshToken = 2;
+}
+
+message UserData {
+    Token token = 1;
+    User user = 2;
+    bool isLoggedIn = 3;
+}
+
+message LoginUserResponse {
+    UserData userData = 1;
 }

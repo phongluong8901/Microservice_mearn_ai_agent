@@ -1,8 +1,9 @@
 import amqp from "amqplib";
+import { sendEmail } from "../../../email/email.notification";
 
 let channel: amqp.Channel;
 
-export async function connectRabbitMQ(maxRetries = 10, retryDelayMs = 3000): Promise<void> {
+export async function connectRabbitMQ(maxRetries = 30, retryDelayMs = 3000): Promise<void> {
     const rabbitUrl = process.env.RabbitMQ_URL;
 
     if (!rabbitUrl) {
@@ -42,6 +43,9 @@ export async function connectRabbitMQ(maxRetries = 10, retryDelayMs = 3000): Pro
                 if (!msg) return;
                 try {
                     const data = JSON.parse(msg.content.toString());
+
+                    await sendEmail(data?.email, data?.otpCode);
+
                     console.log("Sending email: ", data.email);
                     // send email here
                     channel.ack(msg);

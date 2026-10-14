@@ -4,6 +4,8 @@ import crypto from "crypto";
 import path from "path";
 import { PORT } from "../../..";
 import { registerUserController } from "@/app/http/controllers/registerUserController";
+import { verifyUserEmailController } from "@/app/http/controllers/VerifyEmailController";
+import { loginUserController } from "@/app/http/controllers/loginUserController";
 
 // 1. Xác định đường dẫn tuyệt đối tới file cấu hình gRPC (.proto)
 export const PROTO_PATH = path.join("/app", "proto", "auth.proto");
@@ -20,7 +22,7 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 // 3. Chuyển đổi package definition thành object gRPC có thể sử dụng được
 const proto = grpc.loadPackageDefinition(packageDefinition) as any;
 
-// 4. Trỏ vào namespace 'tasks'
+// 4. Trỏ vào namespace 'auth'
 const auth = proto.auth;
 
 async function registerUser(call: any, callback: any) {
@@ -40,14 +42,50 @@ async function registerUser(call: any, callback: any) {
     }
 }
 
+async function verifyUserEmailgRPC(call: any, callback: any) {
+    try {
+        const response = await verifyUserEmailController({
+            email: call?.request?.email,
+            otpCode: call?.request?.otpCode
+        });
+
+        callback(null, response)
+    } catch (error) {
+        callback({
+            code: grpc.status.INVALID_ARGUMENT,
+            message: (error as Error).message || "Email verification failed"
+        },
+            null)
+    }
+}
+
+async function loginUser(call: any, callback: any) {
+    try {
+        const response = await loginUserController({
+            email: call?.request?.email,
+            password: call?.request?.password
+        });
+
+        callback(null, response);
+    } catch (error: any) {
+        callback({
+            code: grpc.status.INVALID_ARGUMENT,
+            message: error?.message || "Login failed"
+        }, null);
+    }
+}
+
 // 7. Hàm chính để khởi tạo và chạy gRPC Server
 export function gRPCServer(portParam?: number) {
     // Khởi tạo một instance server gRPC mới
     const server = new grpc.Server();
 
-
     server.addService(auth.AuthService.service, {
-        registerUser,
+        RegisterUser: registerUser,
+        registerUser: registerUser,
+        verifyUserEmail: verifyUserEmailgRPC,
+        LoginUser: loginUser,
+        loginUser: loginUser,
     });
 
     const bindPort = portParam || PORT || Number(process.env.PORT) || 50053;
