@@ -2,8 +2,9 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { response } from "express"; // (Lưu ý: Biến import này không dùng đến trong file này, bạn có thể xóa đi cho gọn)
 import path from "path";
-import { PROTO_PATH } from "./gRPCServer";
 
+
+export const PROTO_PATH = path.join("/app", "proto", "task.proto");
 
 
 // 2. Đọc và phân tích file .proto đồng bộ (loadSync mặc định không có option nên cần đảm bảo tương thích kiểu dữ liệu nếu cần)
@@ -14,7 +15,7 @@ const proto = grpc.loadPackageDefinition(packageDefinition).tasks as any;
 
 // 4. Khởi tạo một gRPC Client kết nối tới gRPC Server đang chạy ở cổng 50051 (không dùng bảo mật)
 const client = new proto.TaskService(
-    "localhost:50051",
+    "task-service:50051",
     grpc.credentials.createInsecure()
 );
 

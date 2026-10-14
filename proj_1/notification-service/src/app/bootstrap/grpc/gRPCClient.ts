@@ -13,7 +13,7 @@ const proto = grpc.loadPackageDefinition(packageDefinition).tasks as any;
 
 // 4. Khởi tạo một gRPC Client kết nối tới gRPC Server đang chạy ở cổng 50051 (không dùng bảo mật)
 const client = new proto.TaskService(
-    "localhost:50051",
+    "task-service:50051",
     grpc.credentials.createInsecure()
 );
 

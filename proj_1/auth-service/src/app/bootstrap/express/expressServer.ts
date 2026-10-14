@@ -3,7 +3,7 @@ import cors from 'cors';
 import { Express, Response, Request } from "express";
 import path from 'node:path';
 import { handleExpressError } from '../exceptions/handleExpressError';
-import { allTask } from '../grpc/gRPCClient';
+// import { allTask } from '../grpc/gRPCClient';
 
 export function expressServer(app: Express, PORT: number) {
     // Khởi tạo một đối tượng router phụ
@@ -24,10 +24,10 @@ export function expressServer(app: Express, PORT: number) {
         res.json({ message: "server is up" })
     });
 
-    app.get('/tasks', async (req: Request, res: Response) => {
-        const tasks = await allTask()
-        res.json({ tasks })
-    })
+    // app.get('/tasks', async (req: Request, res: Response) => {
+    //     const tasks = await allTask()
+    //     res.json({ tasks })
+    // })
 
     app.listen(PORT, () => {
         console.log(`Express server is runing at http://localhost:${PORT}`)

@@ -5,7 +5,7 @@ import { bootStrapApp } from './app/bootstrap';
 // Khởi tạo một instance ứng dụng Express
 const app = express()
 
-const PORT = parseInt(process.env.PORT as string)
+export const PORT = parseInt(process.env.PORT as string)
 
 // Gọi hàm khởi động ứng dụng
 bootStrapApp(app, PORT)

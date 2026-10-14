@@ -24,10 +24,10 @@ export function expressServer(app: Express, PORT: number) {
         res.json({ message: "server is up" })
     });
 
-    app.get('/tasks', async (req: Request, res: Response) => {
-        const tasks = await allTask()
-        res.json({ tasks })
-    })
+    // app.get('/tasks', async (req: Request, res: Response) => {
+    //     const tasks = await allTask()
+    //     res.json({ tasks })
+    // })
 
     app.listen(PORT, () => {
         console.log(`Express server is runing at http://localhost:${PORT}`)

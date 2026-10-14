@@ -2,6 +2,7 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import crypto from "crypto";
 import path from "path";
+import { PORT } from "../../..";
 
 // 1. Xác định đường dẫn tuyệt đối tới file cấu hình gRPC (.proto)
 export const PROTO_PATH = path.join("/app", "proto", "task.proto");
@@ -61,7 +62,7 @@ async function GetTasks(call: any, callback: any) {
 }
 
 // 7. Hàm chính để khởi tạo và chạy gRPC Server
-export function gRPCServer() {
+export function gRPCServer(portParam?: number) {
     // Khởi tạo một instance server gRPC mới
     const server = new grpc.Server();
 
@@ -70,9 +71,11 @@ export function gRPCServer() {
         GetTasks,
     });
 
-    // Bind server vào địa chỉ IP (0.0.0.0 nghĩa là lắng nghe mọi interface) và cổng 50051
+    const bindPort = portParam || PORT || Number(process.env.PORT) || 50051;
+
+    // Bind server vào địa chỉ IP (0.0.0.0 nghĩa là lắng nghe mọi interface) và cổng
     server.bindAsync(
-        "0.0.0.0:50051",
+        `0.0.0.0:${bindPort}`,
         grpc.ServerCredentials.createInsecure(), // Không dùng chứng chỉ bảo mật (dùng cho môi trường phát triển local)
         (error, port) => {
             if (error) {
