@@ -180,3 +180,19 @@ Nếu không khớp hoặc không tìm thấy user: Trả về thông báo lỗi
 Phản Hồi Client: Kết quả được truyền ngược qua gRPC lên Gateway và trả về cho HTTP Client.
 
 3. Workflow Đăng Nhập (Login)Luồng này cho phép người dùng đã xác thực email truy cập hệ thống và nhận về cặp token bảo mật.Client Gửi Request: Người dùng gửi HTTP POST /api/v1/login kèm email và password tới Gateway Service.Gateway Chuyển Tiếp (gRPC): Gateway gọi loginUsergRPC để chuyển tiếp thông tin đăng nhập sang Auth Service.Xử Lý tại Auth Service:Validate Dữ Liệu: Kiểm tra định dạng đầu vào bằng Zod schema.Kiểm Tra Tài Khoản: Tìm user theo email. Nếu không tồn tại $\rightarrow$ báo lỗi Invalid Email or Password.Kiểm Tra Trạng Thái Xác Thực: Kiểm tra trường isValidEmail. Nếu tài khoản chưa xác thực (VALID_EMAIL) $\rightarrow$ ném lỗi yêu cầu xác thực email trước khi đăng nhập.So Sánh Mật Khẩu: Sử dụng bcrypt.compare (comparePassword) để đối chiếu mật khẩu thô người dùng nhập với mật khẩu đã băm trong DB.Tạo Tokens & Đóng Gói Dữ Liệu (authData):Nếu mật khẩu chính xác, tạo đồng thời Access Token (ngắn hạn, 1 giờ) và Refresh Token (dài hạn) ký bằng các khóa bí mật riêng biệt từ biến môi trường (JWT_TOKEN_KEY, REFRESH_TOKEN_KEY).Loại bỏ trường mật khẩu ra khỏi đối tượng trả về để đảm bảo bảo mật.Đóng gói cấu trúc gồm thông tin token (accessToken, refreshToken), thông tin user, và cờ isLoggedIn: true.Phản Hồi Client: Auth Service trả dữ liệu này qua gRPC $\rightarrow$ Gateway nhận và trả về dưới dạng JSON cho HTTP Client.
+
+4. bo port service trong docker-compose.yml
+1. Phân biệt ports và networks trong Docker
+ports (Ánh xạ cổng ra máy chủ thật - Host):
+
+Dùng để mở cửa từ bên ngoài máy tính của bạn (hoặc từ internet) đi thẳng vào trong container.
+
+Ví dụ: "3000:3000" nghĩa là máy tính của bạn truy cập được localhost:3000 để vào Gateway.
+
+Khi bạn bỏ ports của auth-service (cổng 50053), nghĩa là bạn đóng cổng không cho máy tính bên ngoài (Host) chọc vào nữa.
+
+networks (Mạng nội bộ Docker):
+
+Khi bạn đặt các service vào chung một mạng (microservices-net), Docker sẽ tự động tạo ra một mạng LAN ảo khép kín giữa các container này.
+
+Trong mạng nội bộ này, mọi container đều thấy nhau thông qua container_name (hoặc tên service) và chúng có thể gọi nhau qua đúng cổng gốc bên trong container mà không cần ánh xạ ra bên ngoài.

@@ -30,6 +30,10 @@ npm i dotenv
 npm i -D @types/amqplib
 npm i nodemailer
 
+--- gateway
+npm install jsonwebtoken
+npm install --save-dev @types/jsonwebtoken
+
 # --- run
 --- cd proj_1
 
