@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 
 //loking to send email in production . checkout email API/SMTP product
+// Tạo một đối tượng vận chuyển (transporter) để cấu hình kết nối tới máy chủ SMTP
 const transporter = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
     port: parseInt(process.env.MAIL_PORT as string),
@@ -11,6 +12,7 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// Hàm bất đồng bộ xuất ra dùng để gửi email xác thực nhận vào email người nhận và mã OTP
 export async function sendEmail(receiverEmail: string, optCode: number) {
     const info = await transporter.sendMail({
         from: "From Microservice app",

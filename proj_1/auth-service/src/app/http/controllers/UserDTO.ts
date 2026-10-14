@@ -1,5 +1,6 @@
-import { z } from "zod";
+import { z } from "zod"; // Nhập thư viện Zod dùng để định nghĩa schema và kiểm tra (validate) dữ liệu đầu vào
 
+// Khởi tạo và xuất ra một đối tượng Zod schema để kiểm tra cấu trúc dữ liệu người dùng
 export const userInputSchema = z.object({
     email: z.email()
         .min(5, "email must be at least 5 characters")

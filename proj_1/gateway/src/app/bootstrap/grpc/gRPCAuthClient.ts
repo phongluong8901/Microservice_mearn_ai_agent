@@ -23,13 +23,14 @@ const gRPCAuthClient = new proto.AuthService(
     grpc.credentials.createInsecure()
 );
 
+// Middleware/Controller Express xử lý yêu cầu đăng ký qua gRPC Client
 export function registerUsergRPC(req: Request, res: Response, next: NextFunction) {
     try {
         const fn = gRPCAuthClient.registerUser || gRPCAuthClient.RegisterUser;
         fn.call(gRPCAuthClient, {
             email: req.body?.email,
             password: req.body?.password,
-        }, (err: any, response: any) => {
+        }, (err: any, response: any) => { // Hàm callback nhận kết quả trả về từ gRPC Server
             if (err) {
                 return res.status(400).json({
                     message: err.details || err.message
@@ -43,13 +44,16 @@ export function registerUsergRPC(req: Request, res: Response, next: NextFunction
     }
 }
 
+// Middleware/Controller Express xử lý yêu cầu xác thực email qua gRPC Client
 export function verifyUserEmailgRPC(req: Request, res: Response, next: NextFunction) {
     try {
+        // Lấy hàm gọi RPC verifyUserEmail
         const fn = gRPCAuthClient.verifyUserEmail || gRPCAuthClient.VerifyUserEmail;
+        // Gọi RPC với thông tin email và mã OTP
         fn.call(gRPCAuthClient, {
             email: req.body?.email,
-            otpCode: String(req.body?.otpCode || ""),
-        }, (err: any, response: any) => {
+            otpCode: String(req.body?.otpCode || ""), // Lấy mã OTP và ép kiểu sang chuỗi an toàn
+        }, (err: any, response: any) => { // Hàm callback nhận kết quả
             if (err) {
                 return res.status(400).json({
                     message: err.details || err.message
@@ -63,13 +67,14 @@ export function verifyUserEmailgRPC(req: Request, res: Response, next: NextFunct
     }
 }
 
+// Middleware/Controller Express xử lý yêu cầu đăng nhập qua gRPC Client
 export function loginUsergRPC(req: Request, res: Response, next: NextFunction) {
     try {
         const fn = gRPCAuthClient.loginUser || gRPCAuthClient.LoginUser;
         fn.call(gRPCAuthClient, {
             email: req.body?.email,
             password: req.body?.password,
-        }, (err: any, response: any) => {
+        }, (err: any, response: any) => { // Callback nhận phản hồi từ gRPC Server
             if (err) {
                 return res.status(400).json({
                     message: err.details || err.message

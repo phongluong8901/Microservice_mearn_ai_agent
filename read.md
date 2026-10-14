@@ -26,6 +26,7 @@ npm i --save-dev @types/jsonwebtoken
 
 --- notification-service
 npm i amqplib
+npm i dotenv
 npm i -D @types/amqplib
 npm i nodemailer
 
