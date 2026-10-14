@@ -3,7 +3,8 @@ import cors from 'cors';
 import { Express, Response, Request } from "express";
 import path from 'node:path';
 import { handleExpressError } from '../exceptions/handleExpressError';
-import { allTask } from '../grpc/gRPCClient';
+import { apiV1 } from '../../../routes/apiV1';
+
 
 export function expressServer(app: Express, PORT: number) {
     // Khởi tạo một đối tượng router phụ
@@ -23,14 +24,8 @@ export function expressServer(app: Express, PORT: number) {
         res.json({ message: "server is up" })
     });
 
-    app.get('/tasks', async (req: Request, res: Response, next) => {
-        try {
-            const tasks = await allTask()
-            res.json({ tasks })
-        } catch (error) {
-            next(error)
-        }
-    })
+    //API v1 for router versions
+    apiV1(app, router)
 
     app.use(handleExpressError) // Đăng ký middleware xử lý lỗi chung (phải đặt sau các route)
 

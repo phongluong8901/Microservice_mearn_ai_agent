@@ -3,6 +3,9 @@ version: "3.9"
 services:
   gateway:
     build: ./gateway
+    container_name: gateway
+    env_file:
+      - ./gateway/.env
     ports:
       - "3000:3000"
     volumes:
@@ -10,35 +13,89 @@ services:
       - /app/node_modules
       - ./proto:/app/proto
     depends_on:
-      - task-service
+      - auth-service
+    networks:
+      - microservices-net
+    restart: always
 
   auth-service:
     build: ./auth-service
+    container_name: auth-service
+    env_file:
+      - ./auth-service/.env
     ports:
       - "50053:50053"
     volumes:
       - ./auth-service:/app
       - /app/node_modules
       - ./proto:/app/proto
-
-  task-service:
-    build: ./task-service
-    ports:
-      - "50051:50051"
-    volumes:
-      - ./task-service:/app
-      - /app/node_modules
-      - ./proto:/app/proto
+    networks:
+      - microservices-net
     depends_on:
-      - notification-service
+      - mongo
+      - rabbitmq
+    restart: always
+
+  # task-service:
+  #   build: ./task-service
+  #   ports:
+  #     - "50051:50051"
+  #   volumes:
+  #     - ./task-service:/app
+  #     - /app/node_modules
+  #     - ./proto:/app/proto
+  #   depends_on:
+  #     - notification-service
 
   notification-service:
     build: ./notification-service
+    container_name: notification-service
+    env_file:
+      - ./notification-service/.env
     ports:
       - "50052:50052"
     volumes:
       - ./notification-service:/app
       - /app/node_modules
       - ./proto:/app/proto
+    networks:
+      - microservices-net
     depends_on:
-      - auth-service
+      - rabbitmq
+    restart: always
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    container_name: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=password123
+      - MONGO_INITDB_DATABASE=sales_agent_db
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - microservices-net
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=password123
+    networks:
+      - microservices-net
+    restart: always
+
+networks:
+  microservices-net:
+    driver: bridge
+
+volumes:
+  mongo-data:
+    driver: local
