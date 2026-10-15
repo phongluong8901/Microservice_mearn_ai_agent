@@ -34,6 +34,11 @@ npm i nodemailer
 npm install jsonwebtoken
 npm install --save-dev @types/jsonwebtoken
 
+--- task-service
+npm install mongoose
+npm install @langchain/fireworks @langchain/core
+npm install @langchain/cerebras
+
 # --- run
 --- cd proj_1
 
@@ -51,3 +56,9 @@ task-service: 50051
 notification-service: 50052
 auth-service: 50053
 gateway-service: 3000
+
+# --- link lib
+- langgraph
+https://www.langchain.com/langgraph
+- firework
+https://fireworks.ai/

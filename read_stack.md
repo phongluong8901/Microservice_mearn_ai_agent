@@ -58,6 +58,14 @@ Trong ngữ cảnh của đoạn code trên, Promise không phải là một ki�
 
 "Hàm này khi được gọi sẽ chạy bất đồng bộ (ví dụ: đang kết nối cơ sở dữ liệu để lưu user). Khi nó hoàn thành thành công, nó sẽ trả về một kết quả có kiểu dữ liệu là IUser (thông tin chi tiết của người dùng vừa đăng ký)."
 
+5. pgvector
+pgvector là một phần mở rộng (extension) mã nguồn mở dành riêng cho cơ sở dữ liệu PostgreSQL, cho phép bạn lưu trữ và tìm kiếm các vector embeddings (dữ liệu dạng mảng số thực đại diện cho ngữ nghĩa của văn bản, hình ảnh, âm thanh, v.v.) trực tiếp trong cơ sở dữ liệu quan hệ quen thuộc.
+
+Lưu trữ Vector: Thay vì phải dùng các cơ sở dữ liệu chuyên biệt về vector (như Milvus, Qdrant, Pinecone), bạn có thể dùng ngay PostgreSQL để lưu các vector được sinh ra từ các mô hình AI/ML (như OpenAI, Hugging Face SentenceTransformers).
+
+Tìm kiếm tương tự (Vector Similarity Search): Hỗ trợ các phép toán tìm kiếm khoảng cách phổ biến như:Khoảng cách Euclidean ($L2$)Khoảng cách Cosine (vector_cosine_ops)Tích vô hướng (Inner Product)Lập chỉ mục hiệu suất cao: Hỗ trợ các thuật toán lập chỉ mục như IVFFlat và HNSW giúp tìm kiếm hàng triệu vector cực kỳ nhanh chóng.
+
+Nếu bạn đang xây dựng các tính năng liên quan đến AI (như hệ thống gợi ý sản phẩm dựa trên độ tương đồng văn bản, chatbot RAG tra cứu tài liệu, hoặc phân tích hình ảnh), pgvector giúp bạn kết hợp gọn gàng dữ liệu quan hệ (user, task) và dữ liệu vector AI vào chung một database PostgreSQL duy nhất mà không cần cài thêm công cụ cồng kềnh khác.
 
 # --- more
 🛠️ TECH STACK:
@@ -196,3 +204,11 @@ networks (Mạng nội bộ Docker):
 Khi bạn đặt các service vào chung một mạng (microservices-net), Docker sẽ tự động tạo ra một mạng LAN ảo khép kín giữa các container này.
 
 Trong mạng nội bộ này, mọi container đều thấy nhau thông qua container_name (hoặc tên service) và chúng có thể gọi nhau qua đúng cổng gốc bên trong container mà không cần ánh xạ ra bên ngoài.
+
+---
+stream Agent
+convert to memory agent
+chat history
+add tools to save memory to mongoDB
+tools to save data into pg-vector
+tools to retrieve-data

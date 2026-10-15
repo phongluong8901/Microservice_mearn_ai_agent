@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package chat;
+
+service Chatservice {
+rpc Chat(ChatRequest) returns (stream ChatChunk):
+
+message ChatRequest {
+    string userId = 1;
+    string message = 2;
+}
+
+message ChatChunk {
+    //Text generated so far
+    string content = 1;
+
+    //optional resaonging/progress information
+    string thinking = 2;
+
+    //true when the graph has completed
+    bool done = 3;
+
+    //internal error status (empty on success)
+    string error = 4;
+
+    //optional
+    
+}

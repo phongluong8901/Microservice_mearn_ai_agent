@@ -3,9 +3,10 @@ import * as protoLoader from "@grpc/proto-loader";
 import crypto from "crypto";
 import path from "path";
 import { PORT } from "../../..";
+import { graph } from "@/graph";
 
 // 1. Xác định đường dẫn tuyệt đối tới file cấu hình gRPC (.proto)
-export const PROTO_PATH = path.join("/app", "proto", "task.proto");
+export const PROTO_PATH = path.join("/app", "proto");
 
 // 2. Đọc và phân tích file .proto đồng bộ (loadSync)
 const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
@@ -17,10 +18,11 @@ const packageDefinition = protoLoader.loadSync(PROTO_PATH, {
 });
 
 // 3. Chuyển đổi package definition thành object gRPC có thể sử dụng được
-const proto = grpc.loadPackageDefinition(packageDefinition) as any;
+const grpcObject = grpc.loadPackageDefinition(packageDefinition) as any;
 
 // 4. Trỏ vào namespace 'tasks'
-const task = proto.tasks;
+const taskProto = grpcObject.tasks;
+const chatProto = grpcObject.chat;
 
 // 5. Hàm phụ trợ tạo ngẫu nhiên một Task (mô phỏng dữ liệu)
 function randomTask() {
@@ -61,15 +63,64 @@ async function GetTasks(call: any, callback: any) {
     }
 }
 
+async function Chat(call: grpc.ServerWritableStream<any, any>) {
+    const { userId, message } = call.request;
+
+    const graphStream = await graph.stream(
+        {
+            messages: [{ role: "user", ontent: message }],
+            userId
+        },
+        {
+            subgraphs: "custom",
+            recursionLimit: 400,
+            configurable: {
+                userId
+            }
+        }
+    );
+
+    let inThingking = false;
+
+    for await (const [, chunk] of graphStream) {
+        const content = (chunk as any).content;
+        if (!content) continue;
+
+        const parts = content.split(/(<think>|<think>)/);
+        for (const part of parts) {
+            if (part === "<think>") {
+                inThinking = false;
+                continue;
+            }
+            if (!part) continue;
+
+            call.write({
+                type: inThingking ? "THINKING" : "CONTENT",
+                content: part
+            });
+        }
+    }
+
+    call.write({
+        type: "DONE",
+        content: ""
+    });
+    call.end();
+}
+
 // 7. Hàm chính để khởi tạo và chạy gRPC Server
 export function gRPCServer(portParam?: number) {
     // Khởi tạo một instance server gRPC mới
     const server = new grpc.Server();
 
     // Đăng ký dịch vụ TaskService và gán hàm GetTasks làm bộ xử lý (handler)
-    server.addService(task.TaskService.service, {
+    server.addService(taskProto.TaskService.service, {
         GetTasks,
     });
+
+    server.addService(chatProto.ChatService.service, {
+        Chat
+    })
 
     const bindPort = portParam || PORT || Number(process.env.PORT) || 50051;
 
